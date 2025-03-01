@@ -1,17 +1,21 @@
 package GHAI.ai;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Response {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull(message = "Question ID cannot be null")
     private Long questionId;
+
+    @NotBlank(message = "Answer cannot be blank")
     private String answer;
+
     private String userId; // Optional: Track user submissions
 
     // Getters and Setters
@@ -23,4 +27,4 @@ public class Response {
     public void setAnswer(String answer) { this.answer = answer; }
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
-} 
+}

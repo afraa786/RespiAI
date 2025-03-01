@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa'; // Consolidated all Fa icons
 import { FiPaperclip } from 'react-icons/fi'; // File icon
-import { getBotResponse } from '../api';
+import { getBotResponse ,uploadPdf } from '../api';
 import { BsFilePdf } from 'react-icons/bs'; // PDF file icon
 
 const Chatbot = () => {
@@ -16,6 +16,7 @@ const Chatbot = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false); // Track loading state
   const [file, setFile] = useState(null); // Track the uploaded file
+  const [sessionId, setSessionId] = useState(null); // Store session_id for reference
 
   // Handle file change event
   const handleFileChange = (e) => {
@@ -27,28 +28,35 @@ const Chatbot = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!input.trim() && !file) return; // Ensure the user is sending either a message or file
+    if (!input.trim() && !file) return; // Ensure either text or file is provided
 
-    // Add user message (text input or file)
+    // Add user message
     setMessages((prev) => [
       ...prev,
-      { type: 'user', content: input || 'File uploaded: ' + file.name }, // If there's input, send it, otherwise file name
+      { type: 'user', content: input || 'PDF file uploaded.' }, // If a file is uploaded, mention that
     ]);
 
     setIsLoading(true); // Start loading
 
-    // If there is a file (PDF), send it to the API (simulating the action here)
-    if (file) {
-      // Here you would typically send the file to the API
-      console.log('File uploaded:', file.name);
-    }
-
     try {
-      const data = await getBotResponse(input);
-      // Add bot response after getting the response
+      let data;
+      if (file) {
+        // If a file is uploaded, send it
+        data = await uploadPdf(file);
+      } else {
+        // Otherwise, send the text input
+        data = await getBotResponse(input);
+      }
+
+      // Update the session ID if available
+      if (data.session_id) {
+        setSessionId(data.session_id);
+      }
+
+      // Add bot response after handling text or file upload
       setMessages((prev) => [
         ...prev,
-        { type: 'bot', content: data.answer || 'File received!' }, // Bot answer or confirmation of file
+        { type: 'bot', content: data.message || 'PDF uploaded successfully.' }, // Bot answer or PDF confirmation
       ]);
     } catch (error) {
       console.error('Error fetching bot response:', error);
@@ -60,8 +68,9 @@ const Chatbot = () => {
 
     setIsLoading(false); // Stop loading
     setInput('');
-    setFile(null); // Clear file after submitting
-  };
+    setFile(null); // Reset the file after submission
+};
+
 
   return (
     <div className="min-h-screen pt-20 pb-10 px-4">

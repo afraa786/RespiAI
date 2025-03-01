@@ -42,6 +42,19 @@ export const uploadPdf = async (file) => {
     }
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Function to get the survey questions by questionId using fetch
 export const getSurveyQuestions = async (questionId) => {
     try {
@@ -59,3 +72,8 @@ export const getSurveyQuestions = async (questionId) => {
     }
   };
   
+
+
+
+
+

@@ -2,7 +2,6 @@ package GHAI.ai;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -18,10 +17,13 @@ public class Question {
     private String type; // TEXT, MULTIPLE_CHOICE
 
     @NotBlank(message = "Survey type cannot be blank")
-    private String surveyType; // GENERAL_GBS_SURVEY or BREATHING_SURVEY
+    private String surveyType;
 
     @ElementCollection
     private List<String> options;
+
+    @NotBlank(message = "Category cannot be blank")
+    private String category; // GBS, Asthma, TB, Pneumonia, COVID-19, etc.
 
     // Getters and Setters
     public Long getId() { return id; }
@@ -34,4 +36,6 @@ public class Question {
     public void setSurveyType(String surveyType) { this.surveyType = surveyType; }
     public List<String> getOptions() { return options; }
     public void setOptions(List<String> options) { this.options = options; }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 }

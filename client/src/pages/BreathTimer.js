@@ -248,7 +248,7 @@ export default function BreathTimer() {
           className="text-center mb-8"
         >
           <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-indigo-600 mb-4">
-          Breath Assessment Tool
+          Breath Test
         </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Monitor your breathing capacity to detect potential respiratory conditions and track how air quality might affect your respiratory health.
@@ -294,7 +294,7 @@ export default function BreathTimer() {
               <div className="flex flex-col items-center gap-8">
                 <div className="flex flex-col items-center">
                   <h2 className="text-3xl font-bold text-purple-800 mb-2">Breath Hold Test</h2>
-                  <p className="text-gray-600 text-center max-w-lg mb-4">
+                  <p className="text-gray-600 text-center max-w-lg mb-2">
                     Measures how long you can comfortably hold your breath after a normal inhale. Reduced capacity could be an early sign of respiratory issues.
                   </p>
                 </div>
@@ -303,7 +303,7 @@ export default function BreathTimer() {
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="bg-purple-50 p-6 rounded-xl max-w-lg w-full text-center shadow-inner"
+                    className="bg-purple-50 p-4 rounded-xl max-w-lg w-full text-center shadow-inner"
                   >
                     <h3 className="text-xl font-semibold text-purple-700 mb-4">How to Perform the Test</h3>
                     <ol className="text-left space-y-4 text-purple-800">

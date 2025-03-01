@@ -41,3 +41,21 @@ export const uploadPdf = async (file) => {
         throw new Error('Failed to upload PDF');
     }
 };
+
+// Function to get the survey questions by questionId using fetch
+export const getSurveyQuestions = async (questionId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/question/${1}`);
+      
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const data = await response.json();  // Parse JSON from the response
+      return data;  // Return the data from the response
+    } catch (error) {
+      console.error('Error fetching survey questions:', error);
+      throw error;  // Throw error to be caught in the component
+    }
+  };
+  

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaLungs, FaExclamationTriangle, FaCheckCircle, FaInfoCircle } from 'react-icons/fa';
+import { FaExclamationTriangle, FaCheckCircle, FaInfoCircle } from 'react-icons/fa';
+import { getSurveyQuestions } from '../../api';  // Go one level up from 'ui' folder to 'src'
 
-export const ResultCard = ({ result, duration, onTakeSurvey }) => {
+export const ResultCard = ({ result, duration }) => {
   // Define styles based on result status
   const statusStyles = {
     'Severe Concern': {
@@ -55,6 +56,24 @@ export const ResultCard = ({ result, duration, onTakeSurvey }) => {
   // Get styles for current status
   const style = statusStyles[result.status] || statusStyles['Normal Range'];
 
+  // State to store questions fetched from the API
+  const [questions, setQuestions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Function to fetch survey questions when "Take Survey" button is clicked
+  const fetchSurveyQuestions = async () => {
+    setIsLoading(true);
+
+    try {
+      const data = await getSurveyQuestions(result.questionId);  // Assuming result has questionId
+      setQuestions(data);  // Assuming the response data contains the list of questions
+    } catch (error) {
+      console.error('Error fetching survey questions:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <motion.div
       initial={style.animation.initial}
@@ -85,14 +104,29 @@ export const ResultCard = ({ result, duration, onTakeSurvey }) => {
           {/* Survey button for all result types */}
           <div className="mt-4">
             <button 
-              onClick={onTakeSurvey}
+              onClick={fetchSurveyQuestions}  // Trigger survey fetch on click
               className={`w-full py-2 border rounded-lg font-medium transition-colors ${style.buttonBg} ${style.buttonBorder} ${style.buttonText}`}
+              disabled={isLoading}  // Disable button while loading
             >
-              Take Assessment Survey
+              {isLoading ? 'Loading Survey...' : 'Take Assessment Survey'}
             </button>
           </div>
         </div>
       </div>
+
+      {/* Display survey questions if they have been fetched */}
+      {questions.length > 0 && (
+        <div className="mt-6">
+          <h4 className="font-bold text-xl">Survey Questions</h4>
+          <ul className="list-disc pl-6">
+            {questions.map((question, index) => (
+              <li key={index} className="my-2">
+                {question.text} {/* Assuming each question has a `text` field */}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </motion.div>
   );
-}; 
+};

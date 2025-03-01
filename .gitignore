@@ -54,3 +54,4 @@ build/
 
 ### VS Code ###
 .vscode/
+models/__pycache__

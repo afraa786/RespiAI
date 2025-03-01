@@ -2,14 +2,10 @@ package GHAI.ai;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SurveyService {
-    private static final Logger logger = LoggerFactory.getLogger(SurveyService.class);
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -17,18 +13,58 @@ public class SurveyService {
     @Autowired
     private ResponseRepository responseRepository;
 
+    // Get general questions
+    public List<Question> getGeneralQuestions() {
+        return questionRepository.findBySurveyType("GENERAL");
+    }
+
+    // Get follow-up questions based on responses
+    public List<Question> getFollowUpQuestions(List<Response> responses) {
+        Set<String> detectedCategories = new HashSet<>();
+
+        for (Response response : responses) {
+            Question question = questionRepository.findById(response.getQuestionId()).orElse(null);
+            if (question != null && question.getCategory() != null) {
+                detectedCategories.add(question.getCategory());
+            }
+        }
+
+        if (detectedCategories.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return questionRepository.findByCategoryIn(new ArrayList<>(detectedCategories));
+    }
+
+    // Analyze responses to determine probable diagnosis
+    public String analyzeResponses(List<Response> responses) {
+        Map<String, Integer> categoryCount = new HashMap<>();
+
+        for (Response response : responses) {
+            Question question = questionRepository.findById(response.getQuestionId()).orElse(null);
+            if (question != null && question.getCategory() != null) {
+                categoryCount.put(question.getCategory(), categoryCount.getOrDefault(question.getCategory(), 0) + 1);
+            }
+        }
+
+        return categoryCount.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse("Uncertain - More Tests Needed");
+    }
+
+    // Get all questions
     public List<Question> getAllQuestions() {
-        logger.info("Fetching all questions");
         return questionRepository.findAll();
     }
 
-    public void saveResponses(List<Response> responses) {
-        if (responses == null || responses.isEmpty()) {
-            logger.warn("Attempted to save empty or null responses");
-            throw new IllegalArgumentException("Responses cannot be null or empty");
-        }
+    // Get questions by survey type
+    public List<Question> getQuestionsBySurveyType(String surveyType) {
+        return questionRepository.findBySurveyType(surveyType);
+    }
 
-        logger.info("Saving {} responses", responses.size());
-        responseRepository.saveAll(responses);
+    // Get questions by category
+    public List<Question> getQuestionsByCategory(String category) {
+        return questionRepository.findByCategory(category);
     }
 }

@@ -10,6 +10,9 @@ public class ResponseService {
     @Autowired
     private ResponseRepository responseRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
     // Save responses
     public String saveResponses(List<Response> responses) {
         responseRepository.saveAll(responses);
@@ -31,9 +34,9 @@ public class ResponseService {
         return responseRepository.findByQuestionId(questionId);
     }
 
-    // Get responses by category
-    public List<Response> getResponsesByCategory(String category) {
-        List<Question> questions = questionRepository.findByCategory(category);
+    // Get responses by condition
+    public List<Response> getResponsesByCondition(String condition) {
+        List<Question> questions = questionRepository.findByCondition(condition);
         List<Long> questionIds = questions.stream().map(Question::getId).toList();
         return responseRepository.findByQuestionIdIn(questionIds);
     }
@@ -45,9 +48,9 @@ public class ResponseService {
         return responseRepository.findByQuestionIdIn(questionIds);
     }
 
-    // Get responses by user ID and category
-    public List<Response> getResponsesByUserAndCategory(String userId, String category) {
-        List<Question> questions = questionRepository.findByCategory(category);
+    // Get responses by user ID and condition
+    public List<Response> getResponsesByUserAndCondition(String userId, String condition) {
+        List<Question> questions = questionRepository.findByCondition(condition);
         List<Long> questionIds = questions.stream().map(Question::getId).toList();
         return responseRepository.findByUserIdAndQuestionIdIn(userId, questionIds);
     }

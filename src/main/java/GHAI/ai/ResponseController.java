@@ -35,10 +35,10 @@ public class ResponseController {
         return responseService.getResponsesByQuestionId(questionId);
     }
 
-    // Get responses by category
-    @GetMapping("/category")
-    public List<Response> getResponsesByCategory(@RequestParam String category) {
-        return responseService.getResponsesByCategory(category);
+    // Get responses by condition
+    @GetMapping("/condition")
+    public List<Response> getResponsesByCondition(@RequestParam String condition) {
+        return responseService.getResponsesByCondition(condition);
     }
 
     // Get responses by survey type
@@ -47,13 +47,13 @@ public class ResponseController {
         return responseService.getResponsesBySurveyType(surveyType);
     }
 
-    // Get responses by user ID and category
-    @GetMapping("/user/{userId}/category")
-    public List<Response> getResponsesByUserAndCategory(
+    // Get responses by user ID and condition
+    @GetMapping("/user/{userId}/condition")
+    public List<Response> getResponsesByUserAndCondition(
         @PathVariable String userId,
-        @RequestParam String category
+        @RequestParam String condition
     ) {
-        return responseService.getResponsesByUserAndCategory(userId, category);
+        return responseService.getResponsesByUserAndCondition(userId, condition);
     }
 
     // Get responses by user ID and survey type

@@ -41,9 +41,9 @@ public class SurveyController {
         return surveyService.getQuestionsBySurveyType(surveyType);
     }
 
-    // Get questions by category
-    @GetMapping("/questions/category")
-    public List<Question> getQuestionsByCategory(@RequestParam String category) {
-        return surveyService.getQuestionsByCategory(category);
+    // Get questions by condition
+    @GetMapping("/questions/condition")
+    public List<Question> getQuestionsByCondition(@RequestParam String condition) {
+        return surveyService.getQuestionsByCondition(condition);
     }
 }

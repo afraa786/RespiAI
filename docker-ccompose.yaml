@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend # Path to your frontend directory
+      dockerfile: Dockerfile
+    ports:
+      - "5174:5174" # Map host port 5174 to container port 5174
+    environment:
+      - VITE_BACKEND_URL=http://backend:8080 # Use backend service name as host
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend # Path to your backend directory
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # Map host port 8080 to container port 8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/your-database
+      - SPRING_DATASOURCE_USERNAME=your-username
+      - SPRING_DATASOURCE_PASSWORD=your-password
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: your-database
+      POSTGRES_USER: your-username
+      POSTGRES_PASSWORD: your-password
+    ports:
+      - "5432:5432" # Map host port 5432 to container port 5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:

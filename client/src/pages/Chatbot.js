@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
+import { uploadPdf } from '../api';  // Function to handle file upload to backend
 import { getBotResponse } from '../api';
 
 const Chatbot = () => {
@@ -12,26 +13,40 @@ const Chatbot = () => {
     },
   ]);
   const [input, setInput] = useState('');
+  const [file, setFile] = useState(null); // Track the uploaded PDF file
   const [isLoading, setIsLoading] = useState(false); // Track loading state
+  const [sessionId, setSessionId] = useState(null); // Store session_id for reference
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() && !file) return; // Ensure either text or file is provided
 
     // Add user message
     setMessages((prev) => [
       ...prev,
-      { type: 'user', content: input },
+      { type: 'user', content: input || 'PDF file uploaded.' }, // If a file is uploaded, mention that
     ]);
 
     setIsLoading(true); // Start loading
 
     try {
-      const data = await getBotResponse(input);
-      // Add bot response after getting the response
+      let data;
+      if (file) {
+        // If a file is uploaded, send it
+        data = await uploadPdf(file);
+      } else {
+        // Otherwise, send the text input
+        data = await getBotResponse(input);
+      }
+
+      // Update the session ID if available
+      if (data.session_id) {
+        setSessionId(data.session_id);
+      }
+
       setMessages((prev) => [
         ...prev,
-        { type: 'bot', content: data.answer }, // Bot answer
+        { type: 'bot', content: data.message || 'PDF uploaded successfully.' }, // Bot answer or PDF confirmation
       ]);
     } catch (error) {
       console.error('Error fetching bot response:', error);
@@ -43,8 +58,13 @@ const Chatbot = () => {
 
     setIsLoading(false); // Stop loading
     setInput('');
+    setFile(null); // Reset the file after submission
   };
 
+  // Handle file input change
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
 
   return (
     <div className="min-h-screen pt-20 pb-10 px-4">
@@ -102,6 +122,13 @@ const Chatbot = () => {
                 className="flex-1 p-2 border rounded-lg focus:outline-none focus:border-purple-500"
                 disabled={isLoading} // Disable input while loading
               />
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={handleFileChange}
+                className="p-2 border rounded-lg"
+                disabled={isLoading} // Disable file input while loading
+              />
               <button
                 type="submit"
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
@@ -118,6 +145,13 @@ const Chatbot = () => {
           <p>This AI assistant is for informational purposes only.</p>
           <p>For medical emergencies, please contact your healthcare provider immediately.</p>
         </div>
+
+        {/* Display Session Info (Optional) */}
+        {sessionId && (
+          <div className="mt-4 text-center text-gray-600">
+            <p>Session ID: {sessionId}</p>
+          </div>
+        )}
       </div>
     </div>
   );

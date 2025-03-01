@@ -1,30 +1,43 @@
 const express = require('express');
-const cors = require('cors');  // Import the cors package
+const cors = require('cors');
+const multer = require('multer'); // Import multer for handling file uploads
+const path = require('path');
 
 const app = express();
 
-// Enable CORS for all routes (you can customize the configuration if needed)
+// Enable CORS for all routes
 app.use(cors({
-  origin: 'http://localhost:3000',  // Allow only requests from your frontend (React app)
-  methods: ['GET', 'POST'],  // You can specify allowed methods
-  allowedHeaders: ['Content-Type'],  // You can specify allowed headers
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
 }));
 
-// Middleware to parse JSON requests
-app.use(express.json());
-
-// Example route for handling bot responses
-app.post('/ask', (req, res) => {
-  const userQuestion = req.body.question;  // Access the user's question
-
-  // Example bot logic (you can replace this with your real bot logic)
-  const botAnswer = `You asked about: "${userQuestion}". Here is the answer!`;
-
-  // Send back a response
-  res.json({ question: userQuestion, answer: botAnswer });
+// Set up multer storage
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads'); // Define where to store the files
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Create unique file name
+    },
 });
 
-// Start the server
+const upload = multer({ storage: storage });
+
+// Route to handle PDF file upload
+app.post('/upload-pdf', upload.single('pdf'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).send({ message: 'No file uploaded' });
+    }
+    // Here you can process the PDF (e.g., extract information, analyze, etc.)
+    res.json({ message: 'PDF uploaded successfully!' });
+});
+
+// Example of a chatbot question route
+app.post('/ask', (req, res) => {
+    res.json({ answer: "Here's the response from the bot." });
+});
+
 app.listen(8000, () => {
-  console.log('Server is running on http://localhost:8000');
+    console.log('Server is running on http://localhost:8000');
 });

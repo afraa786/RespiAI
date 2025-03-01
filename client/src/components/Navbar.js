@@ -62,7 +62,7 @@ const Navbar = () => {
               }`}
             >
               <FaLungs className="text-lg" />
-              <span>Breath Timer</span>
+              <span>Test yourself</span>
             </Link>
           </div>
 

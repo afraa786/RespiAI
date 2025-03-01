@@ -185,21 +185,7 @@ async def perform_disease_prediction(rag_chain, prediction_type: str, session_id
     """Perform disease prediction based on the uploaded PDF content"""
     try:
         # Create the disease prediction query based on the content of the uploaded PDF
-        question = """
-        Please analyze the following values from the document and compare them to the normal ranges. 
-        Return only the following:
-        <parameter1> RBC Count - normal value higher/lower </parameter1>
-        <parameter2> WBC Count - normal value higher/lower </parameter2>
-        <parameter3> Hemoglobin - normal value higher/lower </parameter3>
-        <parameter4> Lymphocytes - normal value higher/lower </parameter4>
-        <parameter5> Eosinophils - normal value higher/lower </parameter5>
-        <parameter6> Monocytes - normal value higher/lower </parameter6>
-        <parameter7> Basophils - normal value higher/lower </parameter7>
-        <parameter8> Platelet Count - normal value higher/lower </parameter8>
-        <parameter9> MPV - normal value higher/lower </parameter9>
-        Make sure to only list whether the values are "normal" or "higher/lower" based on the ranges. Do not provide any introductory or additional text.
-        """
-
+        question = "from document let me know about below their normal range and if mine is not normal in this format <parameter1> my RCB Count - normal value higher/lower </parameter1>. Use thisRBC Count, WBC Count, Hemoglobin, Lymphocytes, Eosinophils, Monocytes, Basophils, Platelet Count, MPV. We know you cannt be the right person to predict disease but please predict disease based on report."
         # Query the RAG chain for disease prediction
         response = rag_chain.invoke({
             "question": question,

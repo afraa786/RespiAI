@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
-import { uploadPdf } from '../api';  // Function to handle file upload to backend
+import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa'; // Consolidated all Fa icons
+import { FiPaperclip } from 'react-icons/fi'; // File icon
 import { getBotResponse } from '../api';
+import { BsFilePdf } from 'react-icons/bs'; // PDF file icon
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([
@@ -13,40 +14,41 @@ const Chatbot = () => {
     },
   ]);
   const [input, setInput] = useState('');
-  const [file, setFile] = useState(null); // Track the uploaded PDF file
   const [isLoading, setIsLoading] = useState(false); // Track loading state
-  const [sessionId, setSessionId] = useState(null); // Store session_id for reference
+  const [file, setFile] = useState(null); // Track the uploaded file
+
+  // Handle file change event
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!input.trim() && !file) return; // Ensure either text or file is provided
+    if (!input.trim() && !file) return; // Ensure the user is sending either a message or file
 
-    // Add user message
+    // Add user message (text input or file)
     setMessages((prev) => [
       ...prev,
-      { type: 'user', content: input || 'PDF file uploaded.' }, // If a file is uploaded, mention that
+      { type: 'user', content: input || 'File uploaded: ' + file.name }, // If there's input, send it, otherwise file name
     ]);
 
     setIsLoading(true); // Start loading
 
+    // If there is a file (PDF), send it to the API (simulating the action here)
+    if (file) {
+      // Here you would typically send the file to the API
+      console.log('File uploaded:', file.name);
+    }
+
     try {
-      let data;
-      if (file) {
-        // If a file is uploaded, send it
-        data = await uploadPdf(file);
-      } else {
-        // Otherwise, send the text input
-        data = await getBotResponse(input);
-      }
-
-      // Update the session ID if available
-      if (data.session_id) {
-        setSessionId(data.session_id);
-      }
-
+      const data = await getBotResponse(input);
+      // Add bot response after getting the response
       setMessages((prev) => [
         ...prev,
-        { type: 'bot', content: data.message || 'PDF uploaded successfully.' }, // Bot answer or PDF confirmation
+        { type: 'bot', content: data.answer || 'File received!' }, // Bot answer or confirmation of file
       ]);
     } catch (error) {
       console.error('Error fetching bot response:', error);
@@ -58,12 +60,7 @@ const Chatbot = () => {
 
     setIsLoading(false); // Stop loading
     setInput('');
-    setFile(null); // Reset the file after submission
-  };
-
-  // Handle file input change
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    setFile(null); // Clear file after submitting
   };
 
   return (
@@ -105,6 +102,13 @@ const Chatbot = () => {
                       }`}
                   >
                     {message.content}
+                    {/* Display PDF icon if file is a PDF */}
+                    {file && file.type === 'application/pdf' || message.content.includes('File uploaded:') && (
+                      <div className="flex items-center space-x-2 mt-2">
+                        <BsFilePdf className="text-red-600 w-6 h-6" />
+                        <span className="text-sm">PDF File</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -113,7 +117,7 @@ const Chatbot = () => {
 
           {/* Chat Input */}
           <form onSubmit={handleSubmit} className="p-4 border-t">
-            <div className="flex space-x-2">
+            <div className="flex items-center space-x-2"> {/* This will keep everything in one line */}
               <input
                 type="text"
                 value={input}
@@ -122,13 +126,6 @@ const Chatbot = () => {
                 className="flex-1 p-2 border rounded-lg focus:outline-none focus:border-purple-500"
                 disabled={isLoading} // Disable input while loading
               />
-              <input
-                type="file"
-                accept="application/pdf"
-                onChange={handleFileChange}
-                className="p-2 border rounded-lg"
-                disabled={isLoading} // Disable file input while loading
-              />
               <button
                 type="submit"
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
@@ -136,7 +133,29 @@ const Chatbot = () => {
               >
                 {isLoading ? 'Sending...' : <FaPaperPlane />}
               </button>
+              {/* Custom file input button */}
+              <div
+                className="flex items-center justify-center w-10 h-8 bg-purple-600 rounded-lg cursor-pointer"
+                onClick={() => document.getElementById('file-input').click()} // Trigger the hidden file input
+              >
+                <FiPaperclip className="w-6 h-6 text-white" />
+              </div>
+              {/* Hidden file input */}
+              <input
+                id="file-input"
+                type="file"
+                accept="application/pdf"
+                onChange={handleFileChange}
+                className="hidden" // Hide the actual file input
+                disabled={isLoading} // Disable file input while loading
+              />
             </div>
+            {/* Display the selected file name */}
+            {file && (
+              <div className="mt-2 text-sm text-gray-600">
+                Selected file: <span className="font-semibold">{file.name}</span>
+              </div>
+            )}
           </form>
         </div>
 
@@ -145,13 +164,6 @@ const Chatbot = () => {
           <p>This AI assistant is for informational purposes only.</p>
           <p>For medical emergencies, please contact your healthcare provider immediately.</p>
         </div>
-
-        {/* Display Session Info (Optional) */}
-        {sessionId && (
-          <div className="mt-4 text-center text-gray-600">
-            <p>Session ID: {sessionId}</p>
-          </div>
-        )}
       </div>
     </div>
   );

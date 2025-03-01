@@ -1,31 +1,47 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
+import { getBotResponse } from '../api';
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([
     {
       type: 'bot',
-      content: 'Hello! I\'m your Respiratory Health Assistant. I can help you understand various respiratory conditions and how to manage them in high pollution environments. What would you like to know?'
-    }
+      content:
+        "Hello! I'm your Respiratory Health Assistant. I can help you understand various respiratory conditions and how to manage them in high pollution environments. What would you like to know?",
+    },
   ]);
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Track loading state
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
 
     // Add user message
-    setMessages(prev => [...prev, { type: 'user', content: input }]);
+    setMessages((prev) => [
+      ...prev,
+      { type: 'user', content: input },
+    ]);
 
-    // Simulate bot response (replace with actual AI integration)
-    setTimeout(() => {
-      setMessages(prev => [...prev, {
-        type: 'bot',
-        content: 'I understand you want to know more about respiratory health. While I\'m being developed to provide more specific information, please consult with healthcare professionals for medical advice.'
-      }]);
-    }, 1000);
+    setIsLoading(true); // Start loading
 
+    try {
+      const data = await getBotResponse(input);
+      setMessages((prev) => [
+        ...prev,
+        { type: 'user', content: data.question }, // User question
+        { type: 'bot', content: data.answer }, // Bot answer
+      ]);
+    } catch (error) {
+      console.error('Error fetching bot response:', error);
+      setMessages((prev) => [
+        ...prev,
+        { type: 'bot', content: 'Sorry, there was an error connecting to the server.' },
+      ]);
+    }
+
+    setIsLoading(false); // Stop loading
     setInput('');
   };
 
@@ -50,21 +66,25 @@ const Chatbot = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <div className={`flex items-start space-x-2 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    message.type === 'user' ? 'bg-purple-600' : 'bg-gray-200'
-                  }`}>
+                <div
+                  className={`flex items-start space-x-2 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      message.type === 'user' ? 'bg-purple-600' : 'bg-gray-200'
+                    }`}
+                  >
                     {message.type === 'user' ? (
                       <FaUser className="text-white text-sm" />
                     ) : (
                       <FaRobot className="text-gray-600 text-sm" />
                     )}
                   </div>
-                  <div className={`p-3 rounded-lg ${
-                    message.type === 'user'
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}>
+                  <div
+                    className={`p-3 rounded-lg ${
+                      message.type === 'user' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
                     {message.content}
                   </div>
                 </div>
@@ -81,12 +101,14 @@ const Chatbot = () => {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your question about respiratory health..."
                 className="flex-1 p-2 border rounded-lg focus:outline-none focus:border-purple-500"
+                disabled={isLoading} // Disable input while loading
               />
               <button
                 type="submit"
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                disabled={isLoading} // Disable button while loading
               >
-                <FaPaperPlane />
+                {isLoading ? 'Sending...' : <FaPaperPlane />}
               </button>
             </div>
           </form>

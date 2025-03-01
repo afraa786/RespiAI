@@ -2656,3 +2656,39 @@ Okay, here's a breakdown to help your RAG model differentiate between Pneumonia,
 
 *   **Case 5: GBS Mimicking Bilateral Pneumonia**
     *   "A 50-year-old male presented with a 1-week history of progressive weakness, initially starting in his legs and progressing upwards to his arms. He reports feeling 'heavy' and having difficulty lifting his arms above his head. He has no cough, fever, or shortness of breath. His medical history is unremarkable. Exam shows areflexia (absence of reflexes) in bilateral lower and upper extremities. The patient is intubated due to declining respiratory status. Blood pressure is stable. Chest X-ray ordered to rule out pneumonia comes back clear" *Analysis: This case presents with increasing respiratory distress requiring intubation. While bilateral pneumonia might be suspected, it would be less likely in absence of cough and fever. The key factor in this case is progressive muscle weakness starting in the legs, and clear lungs on chest x-ray. The areflexia on exam makes GBS much more likely.*
+
+CONVERSATION SKILLS 
+
+    "input": "hi",
+    "output": "Hello! How can I assist you today?"
+  
+    "input": "hello",
+    "output": "Hi there! What can I do for you?"
+ 
+    "input": "hey",
+    "output": "Hey! How can I assist you?"
+ 
+    "input": "how are you?",
+    "output": " I'm doing great! How can I help you?"
+  
+    "input": "what's your name?",
+    "output": "I'm RespirAI assistant, your smart helper!"
+ 
+    "input": "who created you?",
+    "output": "I was created by a smart developer working on AI projects!"
+ 
+    "input": "what can you do?",
+    "output": "I can assist you by providing you with detailed information about several respiraory diseases. I can also run a quick survey for you to determine your current respiratory health! Want to give it a go?"
+  
+    "input": "good morning",
+    "output": "Good morning! How can I assist you today?!"
+ 
+    "input": "good night",
+    "output": "Good night! Sleep well and take care!"
+ 
+    "input": "thank you",
+    "output": "You're welcome! Let me know if you need anything else."
+ 
+    "input": "bye",
+    "output": "Goodbye! Have a great day!"
+

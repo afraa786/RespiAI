@@ -28,9 +28,9 @@ const Chatbot = () => {
 
     try {
       const data = await getBotResponse(input);
+      // Add bot response after getting the response
       setMessages((prev) => [
         ...prev,
-        { type: 'user', content: data.question }, // User question
         { type: 'bot', content: data.answer }, // Bot answer
       ]);
     } catch (error) {
@@ -44,6 +44,7 @@ const Chatbot = () => {
     setIsLoading(false); // Stop loading
     setInput('');
   };
+
 
   return (
     <div className="min-h-screen pt-20 pb-10 px-4">
@@ -70,9 +71,8 @@ const Chatbot = () => {
                   className={`flex items-start space-x-2 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      message.type === 'user' ? 'bg-purple-600' : 'bg-gray-200'
-                    }`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${message.type === 'user' ? 'bg-purple-600' : 'bg-gray-200'
+                      }`}
                   >
                     {message.type === 'user' ? (
                       <FaUser className="text-white text-sm" />
@@ -81,9 +81,8 @@ const Chatbot = () => {
                     )}
                   </div>
                   <div
-                    className={`p-3 rounded-lg ${
-                      message.type === 'user' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-800'
-                    }`}
+                    className={`p-3 rounded-lg ${message.type === 'user' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-800'
+                      }`}
                   >
                     {message.content}
                   </div>

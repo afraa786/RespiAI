@@ -28,9 +28,7 @@ public class Question {
     private String condition; // Renamed from 'category' to match the database
 
     @Column(name = "question_order") // Map to the 'question_order' column in the database
-    private int order; // Determines question sequence dynamically
-
-
+    private Integer order; // Changed to Integer to handle null values
 
     // Getters and Setters
     public Long getId() { return id; }
@@ -48,9 +46,9 @@ public class Question {
     public List<Option> getOptions() { return options; }
     public void setOptions(List<Option> options) { this.options = options; }
 
-    public String getCondition() { return condition; } // Renamed from getCategory
-    public void setCondition(String condition) { this.condition = condition; } // Renamed from setCategory
+    public String getCondition() { return condition; }
+    public void setCondition(String condition) { this.condition = condition; }
 
-    public int getOrder() { return order; }
-    public void setOrder(int order) { this.order = order; }
+    public Integer getOrder() { return order; }
+    public void setOrder(Integer order) { this.order = order; }
 }

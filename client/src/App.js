@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Disclaimer from './components/Disclaimer';
-import Home from './pages/Home';
-import Explore from './pages/Explore';
-import Chatbot from './pages/Chatbot';
-import ReadMore from './pages/ReadMore';
-import BreathTimer from './pages/BreathTimer';
+import Navbar from '../../src/components/Navbar';
+import Disclaimer from '../../src/components/Disclaimer';
+import Home from '../../src/pages/Home';
+import Explore from '../../src/pages/Explore';
+import Chatbot from '../../src/pages/Chatbot';
+import ReadMore from '../../src/pages/ReadMore';
+import BreathTimer from '../../src/pages/BreathTimer';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 

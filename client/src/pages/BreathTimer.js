@@ -5,6 +5,7 @@ import { CircularProgress } from "../components/ui/circular-progress";
 import { BreathingAnimation } from "../components/ui/breathing-animation";
 import { ResultCard } from "../components/ui/result-card";
 import { SurveyCard } from "../components/ui/survey-card";
+import { HospitalConnect } from "../components/ui/hospital-connect";
 import { FaPlay, FaStop, FaRedo, FaLungs, FaInfoCircle, FaChartLine } from "react-icons/fa";
 
 const shortnessQuestions = [
@@ -69,6 +70,7 @@ export default function BreathTimer() {
   const [countdown, setCountdown] = useState(3);
   const [isInCountdown, setIsInCountdown] = useState(false);
   const [activeTab, setActiveTab] = useState("timer");
+  const [showHospitalConnect, setShowHospitalConnect] = useState(false);
   
   const timerRef = useRef(null);
   const phaseTimerRef = useRef(null);
@@ -160,8 +162,24 @@ export default function BreathTimer() {
   const handleSurveyComplete = (responses) => {
     setSurveyResponses(responses);
     setShowSurvey(false);
+    
+    // Show hospital connect if breathing issue is severe or moderate
+    if (assessment && (assessment.status === 'Severe Concern' || assessment.status === 'Moderate Concern')) {
+      setShowHospitalConnect(true);
+    }
+    
     // Here you would typically send this data to your backend for analysis
     console.log("Survey responses:", responses);
+  };
+
+  // Function to handle the connect to hospitals button
+  const handleConnectHospitals = () => {
+    setShowHospitalConnect(true);
+  };
+
+  // Function to go back from hospital connect view
+  const handleBackFromHospitals = () => {
+    setShowHospitalConnect(false);
   };
 
   // Start guided breathing
@@ -248,10 +266,10 @@ export default function BreathTimer() {
           className="text-center mb-8"
         >
           <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-indigo-600 mb-4">
-          Breath Test
-        </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Monitor your breathing capacity to detect potential respiratory conditions and track how air quality might affect your respiratory health.
+            Breath Assessment
+          </h1>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            Measure your breath-holding capacity to assess respiratory function. A simple yet effective way to monitor your lung health.
           </p>
         </motion.div>
 
@@ -282,459 +300,495 @@ export default function BreathTimer() {
         </div>
 
         <AnimatePresence mode="wait">
-          {activeTab === "timer" ? (
+          {/* Hospital connect view */}
+          {showHospitalConnect && (
             <motion.div
-              key="timer"
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              variants={tabVariants}
-              className="bg-white rounded-2xl shadow-xl p-8"
+              key="hospital-connect"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="w-full mb-8"
             >
-              <div className="flex flex-col items-center gap-8">
-                <div className="flex flex-col items-center">
-                  <h2 className="text-3xl font-bold text-purple-800 mb-2">Breath Hold Test</h2>
-                  <p className="text-gray-600 text-center max-w-lg mb-2">
-                    Measures how long you can comfortably hold your breath after a normal inhale. Reduced capacity could be an early sign of respiratory issues.
-                  </p>
-                </div>
-                
-                {!isRunning && !lastDuration && !isInCountdown && (
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="bg-purple-50 p-4 rounded-xl max-w-lg w-full text-center shadow-inner"
-                  >
-                    <h3 className="text-xl font-semibold text-purple-700 mb-4">How to Perform the Test</h3>
-                    <ol className="text-left space-y-4 text-purple-800">
-                      <motion.li 
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="flex items-start gap-3"
-                      >
-                        <span className="bg-purple-200 rounded-full w-8 h-8 flex items-center justify-center text-purple-700 font-medium shrink-0 mt-0.5">1</span>
-                        <span>Sit comfortably and take a few normal breaths to relax</span>
-                      </motion.li>
-                      <motion.li 
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="flex items-start gap-3"
-                      >
-                        <span className="bg-purple-200 rounded-full w-8 h-8 flex items-center justify-center text-purple-700 font-medium shrink-0 mt-0.5">2</span>
-                        <span>Click "Start" and take a normal breath in (not too deep)</span>
-                      </motion.li>
-                      <motion.li 
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="flex items-start gap-3"
-                      >
-                        <span className="bg-purple-200 rounded-full w-8 h-8 flex items-center justify-center text-purple-700 font-medium shrink-0 mt-0.5">3</span>
-                        <span>Hold your breath as long as comfortable (don't strain)</span>
-                      </motion.li>
-                      <motion.li 
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 }}
-                        className="flex items-start gap-3"
-                      >
-                        <span className="bg-purple-200 rounded-full w-8 h-8 flex items-center justify-center text-purple-700 font-medium shrink-0 mt-0.5">4</span>
-                        <span>Click "Stop" when you need to exhale</span>
-                      </motion.li>
-              </ol>
-                  </motion.div>
-                )}
-
-                {isInCountdown && (
-                  <motion.div 
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="relative flex items-center justify-center"
-                  >
-                    <div className="absolute text-8xl font-bold text-purple-800 animate-pulse">
-                      {countdown}
-            </div>
-                    <CircularProgress 
-                      value={3 - countdown} 
-                      max={3} 
-                      size={300} 
-                      strokeWidth={20}
-                      animated={true}
-                      primaryColor="purple"
-                      secondaryColor="indigo"
-                    />
-                  </motion.div>
-                )}
-
-                {isRunning && !isInCountdown && (
-                  <motion.div 
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="relative"
-                  >
-            <CircularProgress 
-              value={time} 
-              max={60} 
-              size={300} 
-              strokeWidth={20}
-                      animated={true}
-                      primaryColor="purple"
-                      secondaryColor="indigo"
-            >
-              <div className="text-center">
-                        <div className="text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-indigo-600">{time}</div>
-                        <div className="text-2xl text-purple-600 mt-2 font-medium">seconds</div>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-purple-800">Connect with Specialists</h2>
+                <button 
+                  onClick={handleBackFromHospitals} 
+                  className="text-purple-600 hover:text-purple-800 font-medium"
+                >
+                  ← Back to Results
+                </button>
               </div>
-            </CircularProgress>
-                  </motion.div>
-                )}
-
-                {lastDuration && assessment && !showSurvey && (
-                  <ResultCard 
-                    result={assessment} 
-                    duration={lastDuration}
-                    onTakeSurvey={startSurvey} 
-                  />
-                )}
-
-          <div className="flex gap-4">
-                  {!isRunning && !lastDuration && !isInCountdown && (
-              <Button 
-                onClick={startTimer}
-                      variant="default"
-                      size="xl"
-                      icon={<FaPlay />}
-                      className="min-w-[180px]"
-              >
-                      Start Test
-              </Button>
-            )}
-                  
-                  {(isRunning || isInCountdown) && (
-              <Button
-                onClick={stopTimer}
-                      variant="danger"
-                      size="xl"
-                      icon={<FaStop />}
-                      className="min-w-[180px]"
-              >
-                      Stop
-              </Button>
-            )}
-                  
-            {lastDuration && (
-              <Button
-                onClick={resetTimer}
-                      variant="outline"
-                      size="xl"
-                      icon={<FaRedo />}
-                      className="min-w-[180px]"
-              >
-                      Try Again
-              </Button>
-            )}
-          </div>
-
-                {showSurvey && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="w-full mt-8"
-                  >
-                    <SurveyCard 
-                      questions={surveyType === "shortness" ? shortnessQuestions : generalQuestions}
-                      onComplete={handleSurveyComplete}
-                      title={surveyType === "shortness" ? "Breathing Difficulty Assessment" : "General Symptoms Assessment"}
-                      primaryColor="purple"
-                    />
-                  </motion.div>
-                )}
-              </div>
+              <HospitalConnect severityLevel={assessment?.status} />
             </motion.div>
-          ) : (
+          )}
+
+          {/* Main timer and guided breathing content */}
+          {!showHospitalConnect && (
             <motion.div
-              key="guided"
+              key={activeTab}
               initial="hidden"
               animate="visible"
               exit="exit"
               variants={tabVariants}
-              className="bg-white rounded-2xl shadow-xl p-8"
+              className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-purple-100 relative overflow-hidden"
             >
-              <div className="flex flex-col items-center gap-8">
-                <div className="flex flex-col items-center">
-                  <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-indigo-600 mb-2">Guided Breathing</h2>
-                  <p className="text-gray-600 text-center max-w-lg mb-4">
-                    Follow along with guided breathing patterns to improve lung function, reduce stress, and practice controlled breathing.
-                  </p>
-                </div>
-
-                {!isRunning && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="w-full max-w-2xl"
-                  >
-                    <h3 className="text-xl font-medium text-gray-700 mb-4 flex items-center gap-2">
-                      <span className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
-                        <FaLungs size={16} />
-                      </span>
-                      Select a breathing pattern:
-                    </h3>
+              {activeTab === "timer" ? (
+                <motion.div
+                  key="timer"
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  variants={tabVariants}
+                  className="bg-white rounded-2xl shadow-xl p-8"
+                >
+                  <div className="flex flex-col items-center gap-8">
+                    <div className="flex flex-col items-center">
+                      <h2 className="text-3xl font-bold text-purple-800 mb-2">Breath Hold Test</h2>
+                      <p className="text-gray-600 text-center max-w-lg mb-2">
+                        Measures how long you can comfortably hold your breath after a normal inhale. Reduced capacity could be an early sign of respiratory issues.
+                      </p>
+                    </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-                      {Object.keys(breathingPatterns).map((key) => {
-                        const pattern = breathingPatterns[key];
-                        const isSelected = guidedPattern === key;
-                        
-                        return (
-                          <motion.div
-                            key={key}
-                            whileHover={{ scale: 1.03, y: -5 }}
-                            className={`
-                              relative overflow-hidden rounded-xl border-2 cursor-pointer transition-all duration-300
-                              ${isSelected 
-                                ? `border-${pattern.color}-400 shadow-lg shadow-${pattern.color}-100` 
-                                : 'border-gray-200 hover:border-purple-200'
-                              }
-                            `}
-                            onClick={() => setGuidedPattern(key)}
+                    {!isRunning && !lastDuration && !isInCountdown && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-purple-50 p-4 rounded-xl max-w-lg w-full text-center shadow-inner"
+                      >
+                        <h3 className="text-xl font-semibold text-purple-700 mb-4">How to Perform the Test</h3>
+                        <ol className="text-left space-y-4 text-purple-800">
+                          <motion.li 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.1 }}
+                            className="flex items-start gap-3"
                           >
-                            {/* Top colored band */}
-                            <div className={`h-2 w-full bg-${pattern.color}-500`}></div>
-                            
-                            {/* Content with gradient background */}
-                            <div className={`
-                              p-5 flex flex-col h-full 
-                              ${isSelected ? `bg-gradient-to-br from-${pattern.color}-50 to-white` : 'bg-white'}
-                            `}>
-                              {/* Pattern name with icon */}
-                              <div className="flex items-center mb-2 gap-2">
-                                <div className={`w-8 h-8 rounded-full bg-${pattern.color}-100 flex items-center justify-center`}>
-                                  {key === 'relaxed' && <FaLungs className={`text-${pattern.color}-600`} size={14} />}
-                                  {key === 'box' && <svg className={`text-${pattern.color}-600`} width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-                                  </svg>}
-                                  {key === 'energizing' && <svg className={`text-${pattern.color}-600`} width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M13 3L4 14H12L11 21L20 10H12L13 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                  </svg>}
-                                </div>
-                                <h3 className={`font-semibold text-${pattern.color}-700 text-lg`}>
-                                  {pattern.name}
-                                </h3>
-                              </div>
-                              
-                              <p className="text-gray-600 text-sm mb-4 flex-grow">
-                                {pattern.description}
-                              </p>
-                              
-                              {/* Breathing cycle visualization */}
-                              <div className="mt-auto">
-                                <div className="flex items-center justify-between mb-1">
-                                  <span className={`text-xs font-medium text-${pattern.color}-600`}>Breathing Cycle</span>
-                                  <span className="text-xs text-gray-500">{pattern.inhaleTime + pattern.holdTime + pattern.exhaleTime + pattern.pauseTime}s</span>
-                                </div>
-                                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden flex">
-                                  <div className={`h-full bg-blue-500`} style={{width: `${(pattern.inhaleTime / (pattern.inhaleTime + pattern.holdTime + pattern.exhaleTime + pattern.pauseTime)) * 100}%`}}></div>
-                                  <div className={`h-full bg-${pattern.color}-500`} style={{width: `${(pattern.holdTime / (pattern.inhaleTime + pattern.holdTime + pattern.exhaleTime + pattern.pauseTime)) * 100}%`}}></div>
-                                  <div className={`h-full bg-green-500`} style={{width: `${(pattern.exhaleTime / (pattern.inhaleTime + pattern.holdTime + pattern.exhaleTime + pattern.pauseTime)) * 100}%`}}></div>
-                                  <div className={`h-full bg-gray-300`} style={{width: `${(pattern.pauseTime / (pattern.inhaleTime + pattern.holdTime + pattern.exhaleTime + pattern.pauseTime)) * 100}%`}}></div>
-                                </div>
-                                <div className="flex justify-between text-xs text-gray-500 mt-2">
-                                  <div className="flex items-center">
-                                    <span className="inline-block w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
-                                    <span>{pattern.inhaleTime}s</span>
-                                  </div>
-                                  <div className="flex items-center">
-                                    <span className="inline-block w-2 h-2 rounded-full bg-purple-500 mr-1"></span>
-                                    <span>{pattern.holdTime}s</span>
-                                  </div>
-                                  <div className="flex items-center">
-                                    <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>
-                                    <span>{pattern.exhaleTime}s</span>
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              {/* Selected indicator */}
-                              {isSelected && (
-                                <div className="absolute top-3 right-3">
-                                  <div className={`w-6 h-6 rounded-full bg-${pattern.color}-500 text-white flex items-center justify-center`}>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                      <path d="M5 12L10 17L20 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-              </div>
-            </div>
-          )}
-                            </div>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-                    
-                    <div className="mt-8 mx-auto max-w-md">
-                      <Button 
-                        onClick={startGuidedBreathing}
-                        variant="default"
-                        size="xl"
-                        icon={<FaPlay />}
-                        className="w-full"
+                            <span className="bg-purple-200 rounded-full w-8 h-8 flex items-center justify-center text-purple-700 font-medium shrink-0 mt-0.5">1</span>
+                            <span>Sit comfortably and take a few normal breaths to relax</span>
+                          </motion.li>
+                          <motion.li 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="flex items-start gap-3"
+                          >
+                            <span className="bg-purple-200 rounded-full w-8 h-8 flex items-center justify-center text-purple-700 font-medium shrink-0 mt-0.5">2</span>
+                            <span>Click "Start" and take a normal breath in (not too deep)</span>
+                          </motion.li>
+                          <motion.li 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="flex items-start gap-3"
+                          >
+                            <span className="bg-purple-200 rounded-full w-8 h-8 flex items-center justify-center text-purple-700 font-medium shrink-0 mt-0.5">3</span>
+                            <span>Hold your breath as long as comfortable (don't strain)</span>
+                          </motion.li>
+                          <motion.li 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.4 }}
+                            className="flex items-start gap-3"
+                          >
+                            <span className="bg-purple-200 rounded-full w-8 h-8 flex items-center justify-center text-purple-700 font-medium shrink-0 mt-0.5">4</span>
+                            <span>Click "Stop" when you need to exhale</span>
+                          </motion.li>
+                        </ol>
+                      </motion.div>
+                    )}
+
+                    {isInCountdown && (
+                      <motion.div 
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="relative flex items-center justify-center"
                       >
-                        Start Breathing Exercise
-                      </Button>
-                    </div>
-                  </motion.div>
-                )}
+                        <div className="absolute text-8xl font-bold text-purple-800 animate-pulse">
+                          {countdown}
+                        </div>
+                        <CircularProgress 
+                          value={3 - countdown} 
+                          max={3} 
+                          size={300} 
+                          strokeWidth={20}
+                          animated={true}
+                          primaryColor="purple"
+                          secondaryColor="indigo"
+                        />
+                      </motion.div>
+                    )}
 
-                {isRunning && (
-                  <motion.div
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="w-full max-w-xl flex flex-col items-center"
-                  >
-                    <div className="mb-4 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 text-xl font-medium text-purple-800 shadow-inner">
-                      {breathingPhase === "inhale" && 
-                        <motion.div 
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          key="inhale"
-                          className="flex items-center gap-2"
+                    {isRunning && !isInCountdown && (
+                      <motion.div 
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="relative"
+                      >
+                        <CircularProgress 
+                          value={time} 
+                          max={60} 
+                          size={300} 
+                          strokeWidth={20}
+                          animated={true}
+                          primaryColor="purple"
+                          secondaryColor="indigo"
                         >
-                          <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-                          Breathe In Slowly
-                        </motion.div>
-                      }
-                      {breathingPhase === "hold" && 
-                        <motion.div 
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          key="hold"
-                          className="flex items-center gap-2"
-                        >
-                          <span className="w-3 h-3 rounded-full bg-purple-500"></span>
-                          Hold Your Breath
-                        </motion.div>
-                      }
-                      {breathingPhase === "exhale" && 
-                        <motion.div 
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          key="exhale"
-                          className="flex items-center gap-2"
-                        >
-                          <span className="w-3 h-3 rounded-full bg-green-500"></span>
-                          Exhale Slowly
-                        </motion.div>
-                      }
-                      {breathingPhase === "pause" && 
-                        <motion.div 
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          key="pause"
-                          className="flex items-center gap-2"
-                        >
-                          <span className="w-3 h-3 rounded-full bg-gray-400"></span>
-                          Pause
-                        </motion.div>
-                      }
-                    </div>
-                    
-                    <div className="relative w-full flex justify-center py-8">
-                      {/* Background elements */}
-                      <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-                        <div className="absolute w-full h-full rounded-full bg-gradient-to-tr from-purple-50 to-blue-50 animate-pulse-slow opacity-20"></div>
-                        <motion.div 
-                          animate={{ 
-                            scale: [1, 1.05, 1],
-                            rotate: [0, 5, 0, -5, 0],
-                          }}
-                          transition={{
-                            duration: 10,
-                            ease: "easeInOut",
-                            repeat: Infinity,
-                          }}
-                          className="absolute w-[120%] h-[120%] bottom-[-10%] left-[-10%] rounded-full bg-gradient-to-tr from-blue-50 to-purple-50 opacity-10"
-                        ></motion.div>
-                      </div>
+                          <div className="text-center">
+                            <div className="text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-indigo-600">{time}</div>
+                            <div className="text-2xl text-purple-600 mt-2 font-medium">seconds</div>
+                          </div>
+                        </CircularProgress>
+                      </motion.div>
+                    )}
 
-                      <BreathingAnimation 
-                        state={breathingPhase} 
-                        size={280}
-                        primaryColor={breathingPatterns[guidedPattern].color}
+                    {lastDuration && assessment && !showSurvey && (
+                      <ResultCard 
+                        result={assessment} 
+                        duration={lastDuration}
+                        onTakeSurvey={startSurvey}
+                        onConnectHospitals={handleConnectHospitals}
                       />
+                    )}
+
+                    <div className="flex gap-4">
+                      {!isRunning && !lastDuration && !isInCountdown && (
+                        <Button 
+                          onClick={startTimer}
+                          variant="default"
+                          size="xl"
+                          icon={<FaPlay />}
+                          className="min-w-[180px]"
+                        >
+                          Start Test
+                        </Button>
+                      )}
+                      
+                      {(isRunning || isInCountdown) && (
+                        <Button
+                          onClick={stopTimer}
+                          variant="danger"
+                          size="xl"
+                          icon={<FaStop />}
+                          className="min-w-[180px]"
+                        >
+                          Stop
+                        </Button>
+                      )}
+                      
+                      {lastDuration && (
+                        <Button
+                          onClick={resetTimer}
+                          variant="outline"
+                          size="xl"
+                          icon={<FaRedo />}
+                          className="min-w-[180px]"
+                        >
+                          Try Again
+                        </Button>
+                      )}
                     </div>
-                    
-                    {/* Progress indicator with phase timer */}
-                    <div className="w-full max-w-lg">
-                      <div className="relative h-4 w-full rounded-full bg-gray-100 overflow-hidden mt-10 shadow-inner">
-                        <motion.div 
-                          initial={{ width: "0%" }}
-                          animate={{ width: "100%" }}
-                          transition={{ 
-                            duration: 
-                              breathingPhase === "inhale" 
-                                ? breathingPatterns[guidedPattern].inhaleTime 
-                                : breathingPhase === "hold" 
-                                ? breathingPatterns[guidedPattern].holdTime
-                                : breathingPhase === "exhale"
-                                ? breathingPatterns[guidedPattern].exhaleTime
-                                : breathingPatterns[guidedPattern].pauseTime,
-                            ease: "linear"
-                          }}
-                          className={`h-full rounded-full ${
-                            breathingPhase === "inhale" 
-                              ? "bg-blue-500 progress-solid" 
-                              : breathingPhase === "hold" 
-                              ? "bg-purple-500 progress-solid"
-                              : breathingPhase === "exhale"
-                              ? "bg-green-500 progress-solid"
-                              : "bg-gray-400 progress-solid"
-                          }`}
-                        />
-                        
-                        {/* Countdown timer display */}
-                        <CountdownTimer 
-                          phase={breathingPhase}
-                          pattern={breathingPatterns[guidedPattern]}
-                        />
-                      </div>
-                    </div>
-                    
-                    {/* Phase legend */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 w-full max-w-lg">
-                      <div className={`p-3 bg-blue-50 rounded-lg border border-blue-100 text-center ${breathingPhase === "inhale" ? "ring-2 ring-blue-300" : ""}`}>
-                        <span className="block text-xs text-blue-600 uppercase font-semibold tracking-wider mb-1">Inhale</span>
-                        <span className="block text-lg text-blue-700 font-bold">{breathingPatterns[guidedPattern].inhaleTime}s</span>
-                      </div>
-                      <div className={`p-3 bg-purple-50 rounded-lg border border-purple-100 text-center ${breathingPhase === "hold" ? "ring-2 ring-purple-300" : ""}`}>
-                        <span className="block text-xs text-purple-600 uppercase font-semibold tracking-wider mb-1">Hold</span>
-                        <span className="block text-lg text-purple-700 font-bold">{breathingPatterns[guidedPattern].holdTime}s</span>
-                      </div>
-                      <div className={`p-3 bg-green-50 rounded-lg border border-green-100 text-center ${breathingPhase === "exhale" ? "ring-2 ring-green-300" : ""}`}>
-                        <span className="block text-xs text-green-600 uppercase font-semibold tracking-wider mb-1">Exhale</span>
-                        <span className="block text-lg text-green-700 font-bold">{breathingPatterns[guidedPattern].exhaleTime}s</span>
-                      </div>
-                      <div className={`p-3 bg-gray-50 rounded-lg border border-gray-200 text-center ${breathingPhase === "pause" ? "ring-2 ring-gray-300" : ""}`}>
-                        <span className="block text-xs text-gray-600 uppercase font-semibold tracking-wider mb-1">Pause</span>
-                        <span className="block text-lg text-gray-700 font-bold">{breathingPatterns[guidedPattern].pauseTime}s</span>
-                    </div>
-                  </div>
-                    
-                    <div className="mt-8 flex gap-4">
-                <Button
-                        onClick={stopGuidedBreathing}
-                        variant="danger"
-                        size="xl"
-                        icon={<FaStop />}
-                        className="min-w-[180px]"
+
+                    {showSurvey && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="w-full mt-8"
                       >
-                        Stop
-                </Button>
+                        <SurveyCard 
+                          questions={surveyType === "shortness" ? shortnessQuestions : generalQuestions}
+                          onComplete={handleSurveyComplete}
+                          title={surveyType === "shortness" ? "Breathing Difficulty Assessment" : "General Symptoms Assessment"}
+                          primaryColor="purple"
+                        />
+                      </motion.div>
+                    )}
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="guided"
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  variants={tabVariants}
+                  className="bg-white rounded-2xl shadow-xl p-8"
+                >
+                  <div className="flex flex-col items-center gap-8">
+                    <div className="flex flex-col items-center">
+                      <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-700 to-indigo-600 mb-2">Guided Breathing</h2>
+                      <p className="text-gray-600 text-center max-w-lg mb-4">
+                        Follow along with guided breathing patterns to improve lung function, reduce stress, and practice controlled breathing.
+                      </p>
                     </div>
-                  </motion.div>
-                )}
-            </div>
+
+                    {!isRunning && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="w-full max-w-2xl"
+                      >
+                        <h3 className="text-xl font-medium text-gray-700 mb-4 flex items-center gap-2">
+                          <span className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                            <FaLungs size={16} />
+                          </span>
+                          Select a breathing pattern:
+                        </h3>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                          {Object.keys(breathingPatterns).map((key) => {
+                            const pattern = breathingPatterns[key];
+                            const isSelected = guidedPattern === key;
+                            
+                            return (
+                              <motion.div
+                                key={key}
+                                whileHover={{ scale: 1.03, y: -5 }}
+                                className={`
+                                  relative overflow-hidden rounded-xl border-2 cursor-pointer transition-all duration-300
+                                  ${isSelected 
+                                    ? `border-${pattern.color}-400 shadow-lg shadow-${pattern.color}-100` 
+                                    : 'border-gray-200 hover:border-purple-200'
+                                  }
+                                `}
+                                onClick={() => setGuidedPattern(key)}
+                              >
+                                {/* Top colored band */}
+                                <div className={`h-2 w-full bg-${pattern.color}-500`}></div>
+                                
+                                {/* Content with gradient background */}
+                                <div className={`
+                                  p-5 flex flex-col h-full 
+                                  ${isSelected ? `bg-gradient-to-br from-${pattern.color}-50 to-white` : 'bg-white'}
+                                `}>
+                                  {/* Pattern name with icon */}
+                                  <div className="flex items-center mb-2 gap-2">
+                                    <div className={`w-8 h-8 rounded-full bg-${pattern.color}-100 flex items-center justify-center`}>
+                                      {key === 'relaxed' && <FaLungs className={`text-${pattern.color}-600`} size={14} />}
+                                      {key === 'box' && <svg className={`text-${pattern.color}-600`} width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
+                                      </svg>}
+                                      {key === 'energizing' && <svg className={`text-${pattern.color}-600`} width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M13 3L4 14H12L11 21L20 10H12L13 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                      </svg>}
+                                    </div>
+                                    <h3 className={`font-semibold text-${pattern.color}-700 text-lg`}>
+                                      {pattern.name}
+                                    </h3>
+                                  </div>
+                                  
+                                  <p className="text-gray-600 text-sm mb-4 flex-grow">
+                                    {pattern.description}
+                                  </p>
+                                  
+                                  {/* Breathing cycle visualization */}
+                                  <div className="mt-auto">
+                                    <div className="flex items-center justify-between mb-1">
+                                      <span className={`text-xs font-medium text-${pattern.color}-600`}>Breathing Cycle</span>
+                                      <span className="text-xs text-gray-500">{pattern.inhaleTime + pattern.holdTime + pattern.exhaleTime + pattern.pauseTime}s</span>
+                                    </div>
+                                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden flex">
+                                      <div className={`h-full bg-blue-500`} style={{width: `${(pattern.inhaleTime / (pattern.inhaleTime + pattern.holdTime + pattern.exhaleTime + pattern.pauseTime)) * 100}%`}}></div>
+                                      <div className={`h-full bg-${pattern.color}-500`} style={{width: `${(pattern.holdTime / (pattern.inhaleTime + pattern.holdTime + pattern.exhaleTime + pattern.pauseTime)) * 100}%`}}></div>
+                                      <div className={`h-full bg-green-500`} style={{width: `${(pattern.exhaleTime / (pattern.inhaleTime + pattern.holdTime + pattern.exhaleTime + pattern.pauseTime)) * 100}%`}}></div>
+                                      <div className={`h-full bg-gray-300`} style={{width: `${(pattern.pauseTime / (pattern.inhaleTime + pattern.holdTime + pattern.exhaleTime + pattern.pauseTime)) * 100}%`}}></div>
+                                    </div>
+                                    <div className="flex justify-between text-xs text-gray-500 mt-2">
+                                      <div className="flex items-center">
+                                        <span className="inline-block w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
+                                        <span>{pattern.inhaleTime}s</span>
+                                      </div>
+                                      <div className="flex items-center">
+                                        <span className="inline-block w-2 h-2 rounded-full bg-purple-500 mr-1"></span>
+                                        <span>{pattern.holdTime}s</span>
+                                      </div>
+                                      <div className="flex items-center">
+                                        <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>
+                                        <span>{pattern.exhaleTime}s</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Selected indicator */}
+                                  {isSelected && (
+                                    <div className="absolute top-3 right-3">
+                                      <div className={`w-6 h-6 rounded-full bg-${pattern.color}-500 text-white flex items-center justify-center`}>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M5 12L10 17L20 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                        
+                        <div className="mt-8 mx-auto max-w-md">
+                          <Button 
+                            onClick={startGuidedBreathing}
+                            variant="default"
+                            size="xl"
+                            icon={<FaPlay />}
+                            className="w-full"
+                          >
+                            Start Breathing Exercise
+                          </Button>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {isRunning && (
+                      <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="w-full max-w-xl flex flex-col items-center"
+                      >
+                        <div className="mb-4 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 text-xl font-medium text-purple-800 shadow-inner">
+                          {breathingPhase === "inhale" && 
+                            <motion.div 
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              key="inhale"
+                              className="flex items-center gap-2"
+                            >
+                              <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+                              Breathe In Slowly
+                            </motion.div>
+                          }
+                          {breathingPhase === "hold" && 
+                            <motion.div 
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              key="hold"
+                              className="flex items-center gap-2"
+                            >
+                              <span className="w-3 h-3 rounded-full bg-purple-500"></span>
+                              Hold Your Breath
+                            </motion.div>
+                          }
+                          {breathingPhase === "exhale" && 
+                            <motion.div 
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              key="exhale"
+                              className="flex items-center gap-2"
+                            >
+                              <span className="w-3 h-3 rounded-full bg-green-500"></span>
+                              Exhale Slowly
+                            </motion.div>
+                          }
+                          {breathingPhase === "pause" && 
+                            <motion.div 
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              key="pause"
+                              className="flex items-center gap-2"
+                            >
+                              <span className="w-3 h-3 rounded-full bg-gray-400"></span>
+                              Pause
+                            </motion.div>
+                          }
+                        </div>
+                        
+                        <div className="relative w-full flex justify-center py-8">
+                          {/* Background elements */}
+                          <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                            <div className="absolute w-full h-full rounded-full bg-gradient-to-tr from-purple-50 to-blue-50 animate-pulse-slow opacity-20"></div>
+                            <motion.div 
+                              animate={{ 
+                                scale: [1, 1.05, 1],
+                                rotate: [0, 5, 0, -5, 0],
+                              }}
+                              transition={{
+                                duration: 10,
+                                ease: "easeInOut",
+                                repeat: Infinity,
+                              }}
+                              className="absolute w-[120%] h-[120%] bottom-[-10%] left-[-10%] rounded-full bg-gradient-to-tr from-blue-50 to-purple-50 opacity-10"
+                            ></motion.div>
+                          </div>
+
+                          <BreathingAnimation 
+                            state={breathingPhase} 
+                            size={280}
+                            primaryColor={breathingPatterns[guidedPattern].color}
+                          />
+                        </div>
+                        
+                        {/* Progress indicator with phase timer */}
+                        <div className="w-full max-w-lg">
+                          <div className="relative h-4 w-full rounded-full bg-gray-100 overflow-hidden mt-10 shadow-inner">
+                            <motion.div 
+                              initial={{ width: "0%" }}
+                              animate={{ width: "100%" }}
+                              transition={{ 
+                                duration: 
+                                  breathingPhase === "inhale" 
+                                    ? breathingPatterns[guidedPattern].inhaleTime 
+                                    : breathingPhase === "hold" 
+                                    ? breathingPatterns[guidedPattern].holdTime
+                                    : breathingPhase === "exhale"
+                                    ? breathingPatterns[guidedPattern].exhaleTime
+                                    : breathingPatterns[guidedPattern].pauseTime,
+                                ease: "linear"
+                              }}
+                              className={`h-full rounded-full ${
+                                breathingPhase === "inhale" 
+                                  ? "bg-blue-500 progress-solid" 
+                                  : breathingPhase === "hold" 
+                                  ? "bg-purple-500 progress-solid"
+                                  : breathingPhase === "exhale"
+                                  ? "bg-green-500 progress-solid"
+                                  : "bg-gray-400 progress-solid"
+                              }`}
+                            />
+                            
+                            {/* Countdown timer display */}
+                            <CountdownTimer 
+                              phase={breathingPhase}
+                              pattern={breathingPatterns[guidedPattern]}
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* Phase legend */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 w-full max-w-lg">
+                          <div className={`p-3 bg-blue-50 rounded-lg border border-blue-100 text-center ${breathingPhase === "inhale" ? "ring-2 ring-blue-300" : ""}`}>
+                            <span className="block text-xs text-blue-600 uppercase font-semibold tracking-wider mb-1">Inhale</span>
+                            <span className="block text-lg text-blue-700 font-bold">{breathingPatterns[guidedPattern].inhaleTime}s</span>
+                          </div>
+                          <div className={`p-3 bg-purple-50 rounded-lg border border-purple-100 text-center ${breathingPhase === "hold" ? "ring-2 ring-purple-300" : ""}`}>
+                            <span className="block text-xs text-purple-600 uppercase font-semibold tracking-wider mb-1">Hold</span>
+                            <span className="block text-lg text-purple-700 font-bold">{breathingPatterns[guidedPattern].holdTime}s</span>
+                          </div>
+                          <div className={`p-3 bg-green-50 rounded-lg border border-green-100 text-center ${breathingPhase === "exhale" ? "ring-2 ring-green-300" : ""}`}>
+                            <span className="block text-xs text-green-600 uppercase font-semibold tracking-wider mb-1">Exhale</span>
+                            <span className="block text-lg text-green-700 font-bold">{breathingPatterns[guidedPattern].exhaleTime}s</span>
+                          </div>
+                          <div className={`p-3 bg-gray-50 rounded-lg border border-gray-200 text-center ${breathingPhase === "pause" ? "ring-2 ring-gray-300" : ""}`}>
+                            <span className="block text-xs text-gray-600 uppercase font-semibold tracking-wider mb-1">Pause</span>
+                            <span className="block text-lg text-gray-700 font-bold">{breathingPatterns[guidedPattern].pauseTime}s</span>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-8 flex gap-4">
+                          <Button
+                            onClick={stopGuidedBreathing}
+                            variant="danger"
+                            size="xl"
+                            icon={<FaStop />}
+                            className="min-w-[180px]"
+                          >
+                            Stop
+                          </Button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaLungs, FaExclamationTriangle, FaCheckCircle, FaInfoCircle } from 'react-icons/fa';
+import { FaLungs, FaExclamationTriangle, FaCheckCircle, FaInfoCircle, FaHospital } from 'react-icons/fa';
 
 
-export const ResultCard = ({ result, duration, onTakeSurvey }) => {
+export const ResultCard = ({ result, duration, onTakeSurvey, onConnectHospitals }) => {
   // Define styles based on result status
   const statusStyles = {
     'Severe Concern': {
@@ -56,23 +56,8 @@ export const ResultCard = ({ result, duration, onTakeSurvey }) => {
   // Get styles for current status
   const style = statusStyles[result.status] || statusStyles['Normal Range'];
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  // Determine if we should show the hospital connect button
+  const shouldShowHospitalConnect = result.status === 'Severe Concern' || result.status === 'Moderate Concern';
 
   return (
     <motion.div
@@ -101,15 +86,28 @@ export const ResultCard = ({ result, duration, onTakeSurvey }) => {
             {result.message}
           </p>
 
-          {/* Survey button for all result types */}
-          <div className="mt-4">
+          {/* Action buttons */}
+          <div className="mt-4 space-y-2">
             <button
               onClick={onTakeSurvey}
               className={`w-full py-2 border rounded-lg font-medium transition-colors ${style.buttonBg} ${style.buttonBorder} ${style.buttonText}`}
-
             >
               Take Assessment Survey
             </button>
+            
+            {shouldShowHospitalConnect && (
+              <button
+                onClick={onConnectHospitals}
+                className={`w-full py-2 border-2 rounded-lg font-medium transition-colors flex items-center justify-center
+                  ${result.status === 'Severe Concern' 
+                    ? 'bg-red-600 hover:bg-red-700 text-white border-red-500' 
+                    : 'bg-yellow-500 hover:bg-yellow-600 text-white border-yellow-400'
+                  }`}
+              >
+                <FaHospital className="mr-2" /> 
+                Connect with Hospitals
+              </button>
+            )}
           </div>
         </div>
       </div>

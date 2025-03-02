@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa'; // Consolidated all Fa icons
+import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
+import { uploadPdf,getBotResponse } from '../api';  // Function to handle file upload to backend
 import { FiPaperclip } from 'react-icons/fi'; // File icon
-import { getBotResponse ,uploadPdf } from '../api';
 import { BsFilePdf } from 'react-icons/bs'; // PDF file icon
 
 const Chatbot = () => {
@@ -29,35 +29,42 @@ const Chatbot = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!input.trim() && !file) return; // Ensure either text or file is provided
-
+  
     // Add user message
     setMessages((prev) => [
       ...prev,
       { type: 'user', content: input || 'PDF file uploaded.' }, // If a file is uploaded, mention that
     ]);
-
+  
     setIsLoading(true); // Start loading
-
+  
     try {
       let data;
+  
       if (file) {
         // If a file is uploaded, send it
         data = await uploadPdf(file);
+        setMessages((prev) => [
+          ...prev,
+          { type: 'bot', content: data.message || 'PDF uploaded successfully.' }, // PDF confirmation
+        ]);
       } else {
-        // Otherwise, send the text input
+        // Otherwise, send the text input to get a bot response
         data = await getBotResponse(input);
+  
+        // Check if data has an answer field
+        const answer = data.answer || "I didn’t understand that. Can you clarify?"; // Default message if no answer
+  
+        setMessages((prev) => [
+          ...prev,
+          { type: 'bot', content: answer }, // Display the actual answer from the API
+        ]);
       }
-
+  
       // Update the session ID if available
       if (data.session_id) {
         setSessionId(data.session_id);
       }
-
-      // Add bot response after handling text or file upload
-      setMessages((prev) => [
-        ...prev,
-        { type: 'bot', content: data.message || 'PDF uploaded successfully.' }, // Bot answer or PDF confirmation
-      ]);
     } catch (error) {
       console.error('Error fetching bot response:', error);
       setMessages((prev) => [
@@ -65,11 +72,13 @@ const Chatbot = () => {
         { type: 'bot', content: 'Sorry, there was an error connecting to the server.' },
       ]);
     }
-
+  
     setIsLoading(false); // Stop loading
     setInput('');
     setFile(null); // Reset the file after submission
-};
+  };
+  
+  
 
 
   return (

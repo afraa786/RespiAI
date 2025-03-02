@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaBars, FaTimes, FaLungs, FaHeadSideMask, FaBook, FaRobot, FaBookMedical } from 'react-icons/fa';
+import LanguageSelector from './LanguageSelector';
+import { useTranslation } from 'react-i18next';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,10 +20,10 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { path: '/', label: 'Home', icon: FaLungs },
-    { path: '/explore', label: 'Explore Conditions', icon: FaBook },
-    { path: '/chatbot', label: 'AI Assistant', icon: FaRobot },
-    { path: '/read-more', label: 'Resources', icon: FaBookMedical },
+    { path: '/', label: t('nav.home'), icon: FaLungs },
+    { path: '/explore', label: t('nav.explore'), icon: FaBook },
+    { path: '/chatbot', label: t('nav.assistant'), icon: FaRobot },
+    { path: '/read-more', label: t('nav.resources'), icon: FaBookMedical },
   ];
 
   return (
@@ -52,6 +55,9 @@ const Navbar = () => {
               </Link>
             ))}
 
+            {/* Language Selector */}
+            <LanguageSelector />
+
             {/* Prominent Breath Timer Button */}
             <Link
               to="/breath-timer"
@@ -62,7 +68,7 @@ const Navbar = () => {
               }`}
             >
               <FaLungs className="text-lg" />
-              <span>Test yourself</span>
+              <span>{t('nav.testYourself')}</span>
             </Link>
           </div>
 
@@ -86,7 +92,7 @@ const Navbar = () => {
                   className={`flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium ${
                     location.pathname === link.path
                       ? 'text-purple-600 bg-purple-50'
-                      : 'text-gray-700 hover:text-purple-100'
+                      : 'text-white hover:text-purple-100'
                   }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -95,6 +101,11 @@ const Navbar = () => {
                 </Link>
               ))}
               
+              {/* Language Selector in Mobile Menu */}
+              <div className="px-3 py-2">
+                <LanguageSelector />
+              </div>
+              
               {/* Prominent Breath Timer Button in Mobile Menu */}
               <Link
                 to="/breath-timer"
@@ -102,7 +113,7 @@ const Navbar = () => {
                 onClick={() => setIsOpen(false)}
               >
                 <FaLungs className="text-lg" />
-                <span>Breath Timer</span>
+                <span>{t('nav.testYourself')}</span>
               </Link>
             </div>
           </div>

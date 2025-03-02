@@ -1,0 +1,160 @@
+{
+  "common": {
+    "languages": {
+      "en": "English",
+      "hi": "Hindi",
+      "ur": "Urdu",
+      "mr": "Marathi",
+      "ta": "Tamil"
+    },
+    "selectLanguage": "Select Language"
+  },
+  "nav": {
+    "home": "Home",
+    "explore": "Explore Conditions",
+    "assistant": "AI Assistant",
+    "resources": "Resources",
+    "testYourself": "Test yourself"
+  },
+  "home": {
+    "heroTitle": "Breathing Better in a Changing World",
+    "heroSubtitle": "Your AI-powered assistant for navigating respiratory health, treatment options, and improving breathing in high AQI environments",
+    "searchPlaceholder": "Search for respiratory health information...",
+    "trendingTopics": "Trending Topics",
+    "learnMore": "Learn more",
+    "aiChatbot": "AI Chatbot",
+    "tryNow": "Try Now",
+    "informationHub": "Information Hub",
+    "explore": "Explore",
+    "treatmentGuide": "Treatment Guide",
+    "viewGuide": "View Guide",
+    "tabs": {
+      "overview": "Overview",
+      "causes": "Causes",
+      "symptoms": "Symptoms",
+      "diagnosis": "Diagnosis",
+      "treatment": "Treatment",
+      "preventionTips": "Prevention Tips"
+    },
+    "cards": {
+      "overview": {
+        "respiratoryHealth": {
+          "title": "Understanding Respiratory Health",
+          "content": "Learn about the respiratory system and how it can be affected by environmental factors, infections, and other conditions..."
+        },
+        "earlyDetection": {
+          "title": "Early Detection",
+          "content": "Recognizing early signs of respiratory conditions is crucial for better outcomes. Learn about the initial symptoms and when to seek medical attention..."
+        },
+        "latestResearch": {
+          "title": "Latest Research",
+          "content": "Recent studies show promising developments in respiratory treatment methods and understanding of various conditions..."
+        }
+      },
+      "causes": {
+        "airQuality": {
+          "title": "Air Quality Impact",
+          "content": "High levels of air pollution can trigger or worsen respiratory conditions. Learn how AQI affects your breathing..."
+        },
+        "riskFactors": {
+          "title": "Risk Factors",
+          "content": "Various factors can increase your risk of respiratory issues. Understanding these can help in prevention strategies..."
+        }
+      },
+      "symptoms": {
+        "warningSigns": {
+          "title": "Warning Signs",
+          "content": "Initial symptoms often include shortness of breath, persistent cough, wheezing, or chest tightness. Early recognition is key..."
+        },
+        "progression": {
+          "title": "Symptom Progression",
+          "content": "Learn how respiratory symptoms typically progress and what to watch for during different stages of various conditions..."
+        }
+      },
+      "diagnosis": {
+        "process": {
+          "title": "Diagnostic Process",
+          "content": "Healthcare providers use various tests including spirometry, chest X-rays, and breathing tests to diagnose respiratory conditions..."
+        },
+        "tests": {
+          "title": "Medical Tests",
+          "content": "Understanding the various tests used in respiratory diagnosis and what they mean for your treatment plan..."
+        }
+      },
+      "treatment": {
+        "options": {
+          "title": "Treatment Options",
+          "content": "Current treatment approaches include medications, oxygen therapy, pulmonary rehabilitation, and lifestyle changes..."
+        },
+        "recovery": {
+          "title": "Recovery Process",
+          "content": "The recovery process varies for each condition but typically involves pulmonary rehabilitation and breathing exercises..."
+        }
+      },
+      "prevention": {
+        "measures": {
+          "title": "Preventive Measures",
+          "content": "Many respiratory conditions can be prevented or managed through air quality awareness, masks, and reducing exposure to triggers..."
+        },
+        "practices": {
+          "title": "Healthy Practices",
+          "content": "Maintaining respiratory health through proper breathing exercises, diet, and avoiding smoke exposure..."
+        }
+      }
+    },
+    "resources": {
+      "title": "Resources",
+      "chatbot": {
+        "description": "Get instant answers to your questions about respiratory health from our AI assistant"
+      },
+      "hub": {
+        "description": "Access comprehensive resources and latest research about respiratory health and air quality"
+      },
+      "treatment": {
+        "description": "Learn about various treatment options for respiratory conditions and breathing improvement techniques"
+      }
+    },
+    "emergency": {
+      "title": "Emergency? Need immediate help?",
+      "description": "If you're experiencing severe symptoms, don't wait - get help now.",
+      "callEmergency": "Call Emergency (112)",
+      "callAmbulance": "Call Ambulance (102)"
+    }
+  },
+  "breadthTimer": {
+    "title": "Breath Assessment",
+    "subtitle": "Measure your breath-holding capacity to assess respiratory function. A simple yet effective way to monitor your lung health.",
+    "holdTest": "Breath Hold Test",
+    "guidedBreathing": "Guided Breathing",
+    "description": "Measures how long you can comfortably hold your breath after a normal inhale. Reduced capacity could be an early sign of respiratory issues.",
+    "instructions": "How to Perform the Test",
+    "startTest": "Start Test",
+    "stopTest": "Stop",
+    "tryAgain": "Try Again",
+    "step1": "Sit comfortably and take a few normal breaths to relax",
+    "step2": "Click \"Start\" and take a normal breath in (not too deep)",
+    "step3": "Hold your breath as long as comfortable (don't strain)",
+    "step4": "Click \"Stop\" when you need to exhale"
+  },
+  "assessments": {
+    "severe": "Severe Concern",
+    "moderate": "Moderate Concern",
+    "normal": "Normal Range",
+    "severeDesc": "Your breath-holding time is significantly reduced, which could indicate respiratory issues. This may be related to existing respiratory conditions or environmental factors. Please complete the assessment survey for a more detailed analysis.",
+    "moderateDesc": "Your breath-holding capacity is below average. While this isn't necessarily alarming, it could indicate minor respiratory issues. Regular monitoring is recommended.",
+    "normalDesc": "Your breath-holding time is within the normal range. This suggests good respiratory function. Continue to monitor regularly for any changes.",
+    "takeSurvey": "Take Assessment Survey",
+    "connectHospitals": "Connect with Hospitals"
+  },
+  "hospitalConnect": {
+    "title": "Connect with Top Hospitals in Mumbai",
+    "subtitle": "Based on your breathing assessment, we recommend consulting with respiratory specialists. Choose a hospital below to view details and contact information.",
+    "specialties": "Specialties",
+    "keySpecialists": "Key Specialists",
+    "getDirections": "Get Directions",
+    "visitWebsite": "Visit Website",
+    "viewDetails": "View Details",
+    "backToList": "Back to list",
+    "connectSpecialists": "Connect with Specialists"
+  }
+} 

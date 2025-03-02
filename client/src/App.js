@@ -7,6 +7,7 @@ import Explore from './pages/Explore';  // Correct path
 import Chatbot from './pages/Chatbot';  // Correct path
 import ReadMore from './pages/ReadMore';  // Correct path
 import BreathTimer from './pages/BreathTimer';  // Correct path
+import { FaGlobe } from 'react-icons/fa';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 

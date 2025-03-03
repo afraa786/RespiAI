@@ -7,28 +7,6 @@
 2. **In-Depth Information** – Access detailed insights on diseases like Asthma, Tuberculosis, Pneumonia, Whooping Cough, Pulmonary Hypertension, Rhinitis, and GBS (Guillain-Barré Syndrome).
 3. **AI-Powered Assistance** – Get real-time answers to your queries about symptoms, causes, and treatments.
 4. **Breath Test & Health Survey** – Measure your respiratory health with a breath test timer and personalized surveys for tailored insights.
-
-# Project Structure
-/gbs-ai-assistant
- ├── src/
- │   ├── App.css
- │   │   ├── logo.svg      
- │   │   ├── postcss.config.js   
- │   │   ├── tailwind.config.js
- │   │   ├── Docker-Frontend.yml
- │   ├── components/
- │   │   ├── ui/
- │   │   │   └── resultcard/    
- ├── backend/                
- │   ├── models/
- │   │   ├── Dockerfile       
- │   │   ├── my_api.py    
- │   │   ├── vectordb/chroma/
- │   │   ├── pdfBot/
- │   │   ├── research_data.pdf 
- │   │   └── requirements.txt 
- ├── README.md
- └── research_data.txt
  
  # Technologies used
  - **tailwind css, React.js** (Frontend)  
@@ -81,7 +59,7 @@
 🔹 **Asthma** – Common triggers & management  
 🔹 **Pulmonary Hypertension** – Symptoms & complications  
 🔹 **Whooping Cough (Pertussis)** – How it spreads & prevention  
-🔹 **Myasthenia Gravis** – Respiratory impact & care 
+🔹 **Gulliean Barre Syndrome** – Respiratory impact & care 
 
 ##  **Future Enhancements**  
 1. **Machine learning-powered disease prediction**  

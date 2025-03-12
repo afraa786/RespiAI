@@ -1,31 +1,25 @@
+/* General Styles */
 .App {
   text-align: center;
+  font-family: 'Inter', sans-serif; /* Modern font */
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2); /* Subtle gradient background */
+  min-height: 100vh;
+  padding: 2rem;
+  color: #333; /* Darker text for better readability */
 }
 
+/* Logo Styles */
 .App-logo {
-  height: 40vmin;
+  height: 20vmin; /* Slightly smaller for better proportion */
   pointer-events: none;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.1)); /* Soft shadow for depth */
 }
 
+/* Logo Animation */
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
 }
 
 @keyframes App-logo-spin {
@@ -34,5 +28,89 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Header Styles */
+.App-header {
+  background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+  border-radius: 20px; /* Rounded corners */
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  max-width: 800px; /* Limit width for better readability */
+  margin: 0 auto; /* Center the header */
+  min-height: 70vh; /* Adjust height for better proportion */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Title Styles */
+.App-title {
+  font-size: 2.5rem;
+  font-weight: 700; /* Bold title */
+  color: #2c3e50; /* Dark blue for contrast */
+  margin-bottom: 1rem;
+}
+
+/* Subtitle Styles */
+.App-subtitle {
+  font-size: 1.25rem;
+  color: #7f8c8d; /* Gray for subtlety */
+  margin-bottom: 2rem;
+}
+
+/* Link Styles */
+.App-link {
+  color: #3498db; /* Bright blue for links */
+  text-decoration: none;
+  font-weight: 600; /* Semi-bold */
+  transition: color 0.3s ease; /* Smooth hover effect */
+}
+
+.App-link:hover {
+  color: #2980b9; /* Darker blue on hover */
+}
+
+/* Button Styles */
+.App-button {
+  background: #3498db; /* Bright blue */
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px; /* Rounded corners */
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+}
+
+.App-button:hover {
+  background: #2980b9; /* Darker blue on hover */
+  transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.App-button:active {
+  transform: translateY(0); /* Reset on click */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .App-header {
+    padding: 1rem;
+    min-height: 60vh; /* Adjust height for smaller screens */
+  }
+
+  .App-title {
+    font-size: 2rem; /* Smaller title for mobile */
+  }
+
+  .App-subtitle {
+    font-size: 1rem; /* Smaller subtitle for mobile */
+  }
+
+  .App-logo {
+    height: 25vmin; /* Slightly larger logo for mobile */
   }
 }

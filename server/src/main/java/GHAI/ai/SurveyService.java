@@ -18,7 +18,6 @@ public class SurveyService {
         return questionRepository.findBySurveyType("GENERAL");
     }
 
-    // Get follow-up questions based on responses
     public List<Question> getFollowUpQuestions(List<Response> responses) {
         Set<String> detectedConditions = new HashSet<>();
 
@@ -36,7 +35,6 @@ public class SurveyService {
         return questionRepository.findByConditionIn(new ArrayList<>(detectedConditions));
     }
 
-    // Analyze responses to determine probable diagnosis
     public String analyzeResponses(List<Response> responses) {
         Map<String, Integer> conditionCount = new HashMap<>();
 
@@ -53,17 +51,14 @@ public class SurveyService {
                 .orElse("Uncertain - More Tests Needed");
     }
 
-    // Get all questions
     public List<Question> getAllQuestions() {
         return questionRepository.findAll();
     }
 
-    // Get questions by survey type
     public List<Question> getQuestionsBySurveyType(String surveyType) {
         return questionRepository.findBySurveyType(surveyType);
     }
 
-    // Get questions by condition
     public List<Question> getQuestionsByCondition(String condition) {
         return questionRepository.findByCondition(condition);
     }
